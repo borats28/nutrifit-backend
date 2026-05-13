@@ -1,0 +1,24 @@
+version: '3.8' # Docker Compose sürümü
+
+services:
+  # MySQL Veritabanı Servisi
+  db:
+    image: mysql:8.0
+    container_name: nutrifit-mysql # Container adı
+    restart: unless-stopped
+    environment:
+      # Veritabanı, kullanıcı ve şifre bilgileri
+      MYSQL_DATABASE: nutrifit_db
+      MYSQL_USER: nutrifit_user
+      MYSQL_PASSWORD: nutrifit_pass
+      MYSQL_ROOT_PASSWORD: root_password_123 # Admin (root) şifresi
+    ports:
+      # Bilgisayardaki 3306 portunu, container'ın 3306 portuna bağla
+      - "3306:3306"
+    volumes:
+      # Veritabanı verilerini kalıcı hale getir
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  # Verilerin saklanacağı kalıcı alan tanımı
+  mysql_data:
