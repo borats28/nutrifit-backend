@@ -25,7 +25,6 @@ public class HealthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    // SAĞLIK KAYDI EKLEME
     @PostMapping("/add")
     public ResponseEntity<?> addHealthRecord(@RequestBody Health health, @RequestHeader("Authorization") String token) {
         String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
@@ -33,7 +32,6 @@ public class HealthController {
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
         health.setUser(user);
-        // Eğer tarih gönderilmediyse bugünü al
         if (health.getDate() == null) {
             health.setDate(java.time.LocalDate.now());
         }
@@ -42,7 +40,6 @@ public class HealthController {
         return ResponseEntity.ok("Sağlık kaydı başarıyla eklendi.");
     }
 
-    // SAĞLIK GEÇMİŞİNİ LİSTELEME
     @GetMapping("/list")
     public ResponseEntity<?> getHealthRecords(@RequestHeader("Authorization") String token) {
         String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
@@ -53,7 +50,6 @@ public class HealthController {
         return ResponseEntity.ok(records);
     }
 
-    // SİLME İŞLEMİ
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteHealth(@PathVariable Long id) {
         if (healthRepository.existsById(id)) {
@@ -62,5 +58,24 @@ public class HealthController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateHealth(@PathVariable Long id, @RequestBody Health healthDetails, @RequestHeader("Authorization") String token) {
+        String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        return healthRepository.findById(id).map(existingHealth -> {
+
+            if (!existingHealth.getUser().getUserId().equals(user.getUserId())) {
+                return ResponseEntity.status(403).body("Bu kaydı güncelleme yetkiniz yok.");
+            }
+
+            existingHealth.setNotes(healthDetails.getNotes());
+            healthRepository.save(existingHealth);
+
+            return ResponseEntity.ok("Sağlık kaydı başarıyla güncellendi.");
+
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

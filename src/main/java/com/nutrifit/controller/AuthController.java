@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600) // Frontend (React) farklı portta olacağı için izin veriyoruz
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -36,37 +36,31 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    // Kayıt olma
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
-        //Kullanıcı adı alınmış mı kontrol et
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Hata: Bu kullanıcı adı zaten kullanımda!"));
         }
 
-        //Email alınmış mı kontrol et
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Hata: Bu email zaten kullanımda!"));
         }
 
-        //Yeni kullanıcı oluştur
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
-        user.setPassword(encoder.encode(signUpRequest.getPassword())); // Şifreyi hash'le (Bcrypt)
+        user.setPassword(encoder.encode(signUpRequest.getPassword()));
 
-        //Veritabanına kaydet
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("Kullanıcı başarıyla kaydedildi!"));
     }
 
-    // Giriş yapma
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 

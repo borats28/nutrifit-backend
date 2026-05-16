@@ -115,14 +115,13 @@ public class AiService {
         plan.setUser(user);
         plan.setGoal(goal);
         plan.setPromptTxt(prompt);
-        plan.setAiResponse(aiResponse); // JSON formatında dönecek cevabı buraya basıyoruz
+        plan.setAiResponse(aiResponse); // JSON formatında dönecek cevap
 
         return sportPlanRepository.save(plan);
     }
 
-    // ============================================================================================
     // KOÇ İLE SOHBET (Mevcut Planları Bilerek Cevap Verir)
-    // ============================================================================================
+
     public String kocIleSohbetEt(User user, String userMessage) {
         StringBuilder context = new StringBuilder();
         context.append("KULLANICI: ").append(user.getUsername()).append("\n");
@@ -143,20 +142,16 @@ public class AiService {
         return callGeminiApi(prompt);
     }
 
-    // ============================================================================================
     // ANALİZ METODLARI (Resim Yükleme)
-    // ============================================================================================
 
     public String vucutAnaliziYap(MultipartFile imageFile, User user) {
         try {
             String base64Image = Base64.getEncoder().encodeToString(imageFile.getBytes());
 
-            // ✅ goal'u veritabanından çekiyoruz
             String hedefBilgisi = goalRepository.findTopByUserOrderByGoalIdDesc(user)
                     .map(g -> g.getHedefKilo() + "kg")
                     .orElse("belirtilmemiş");
 
-            // ✅ Ölçüm bilgisi de ekleyelim
             String olcumBilgisi = measurementRepository.findTopByUserOrderByMeasurementDateDesc(user)
                     .map(m -> m.getKilo() + "kg, " + m.getFitnessLevel() + " seviye")
                     .orElse("belirtilmemiş");
@@ -208,14 +203,14 @@ public class AiService {
         sb.append("- BMR (Bazal Metabolizma): ").append(calcs.getBmrValue()).append(" kalori\n");
         sb.append("- Aktivite/Fitness Seviyesi: ").append(measurement.getFitnessLevel()).append("\n");
 
-        // --- KAN TAHLİLİ MANTIĞI ---
+        // KAN TAHLİLİ MANTIĞI
         if (bloodTest != null && bloodTest.getAnalysisResult() != null) {
             sb.append("\n⚠️ ÖNEMLİ - KAN TAHLİLİ BULGULARI:\n");
             sb.append(bloodTest.getAnalysisResult()).append("\n");
             sb.append("LÜTFEN BU BULGULARA GÖRE YASAKLI VEYA ÖNERİLEN GIDALARI SEÇ.\n");
         }
 
-        // --- SAĞLIK GEÇMİŞİ ---
+        // SAĞLIK GEÇMİŞİ
         if (!healthRecords.isEmpty()) {
             sb.append("\n⚠️ SAĞLIK NOTLARI / HASTALIKLAR:\n");
             for (Health h : healthRecords) sb.append("- ").append(h.getNotes()).append("\n");
@@ -247,21 +242,17 @@ public class AiService {
         return sb.toString();
     }
 
-    // ============================================================================================
-    // API ÇAĞRI MERKEZİ (Requests)
-    // ============================================================================================
+    // API ÇAĞRI MERKEZİ
 
     private String callGeminiApi(String promptText) {
         try {
-            // --- DEDEKTİF KODU: Bellekteki API anahtarını kontrol edelim ---
             String maskedKey = (geminiApiKey != null && geminiApiKey.length() > 10)
                     ? geminiApiKey.substring(0, 10) + "..."
                     : "Eksik_veya_Okunamadi";
             logger.info("🔑 ŞU AN OKUNAN API KEY: " + maskedKey);
-            // ----------------------------------------------------------------
 
             String maskedUrl = GEMINI_URL + maskedKey;
-            logger.info("🔗 GİDEN URL: " + maskedUrl); // Log
+            logger.info("🔗 GİDEN URL: " + maskedUrl);
             final String finalUrl = GEMINI_URL + geminiApiKey;
 
             HttpHeaders headers = new HttpHeaders();

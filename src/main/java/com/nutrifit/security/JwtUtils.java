@@ -17,10 +17,10 @@ import java.util.Date;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${nutrifit.app.jwtSecret}") // application.properties'den değeri okuyor
+    @Value("${nutrifit.app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${nutrifit.app.jwtExpirationMs}") // application.properties'den değeri okuyor
+    @Value("${nutrifit.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
     // JWT token oluşturma

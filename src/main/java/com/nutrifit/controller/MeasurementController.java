@@ -37,27 +37,18 @@ public class MeasurementController {
     @Autowired
     CalculationService calculationService;
 
-    // Ölçüm ekleme ve hesaplama
     @PostMapping("/add")
     public ResponseEntity<?> addMeasurement(@RequestBody MeasurementRequest request) {
 
-        // Giriş yapmış olan kullanıcıyı bul
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName(); // Token'dan gelen kullanıcı adı
+        String username = auth.getName();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı bulunamadı"));
 
-        // Yeni ölçüm nesnesi oluştur
         Measurement measurement = getMeasurement(request, user);
-
-        // Ölçümü kaydet
         Measurement savedMeasurement = measurementRepository.save(measurement);
-
-        // Hesaplamaları yap
         Calculations calculations = calculationService.performCalculations(savedMeasurement);
-
-        // Hesaplamaları kaydet
         calculationRepository.save(calculations);
 
         return ResponseEntity.ok(new MessageResponse("Ölçüm ve hesaplamalar başarıyla kaydedildi!"));
@@ -72,7 +63,6 @@ public class MeasurementController {
         measurement.setUser(user);
         measurement.setFitnessLevel(request.getFitnessLevel());
 
-        // Cinsiyet string geliyor güvenlik için Enum'a çeviriyoruz
         if ("MALE".equalsIgnoreCase(request.getCinsiyet())) {
             measurement.setCinsiyet(Gender.MALE);
         } else {
@@ -81,7 +71,6 @@ public class MeasurementController {
         return measurement;
     }
 
-    // Kullanıcının geçmiş ölçümlerini getirme
     @GetMapping("/history")
     public ResponseEntity<List<Measurement>> getUserHistory() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

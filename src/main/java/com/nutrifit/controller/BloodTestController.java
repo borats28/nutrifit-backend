@@ -29,7 +29,6 @@ public class BloodTestController {
     @Autowired
     JwtUtils jwtUtils;
 
-    // YÜKLEME
     @PostMapping("/upload")
     public ResponseEntity<?> uploadBloodTest(@RequestParam("image") MultipartFile file) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -38,19 +37,16 @@ public class BloodTestController {
         return ResponseEntity.ok(result);
     }
 
-    // GEÇMİŞ
     @GetMapping("/history")
     public ResponseEntity<List<BloodTest>> getBloodTestHistory(@RequestHeader("Authorization") String token) {
         String username = jwtUtils.getUserNameFromJwtToken(token.substring(7));
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
 
-        // Tarihe göre sırala (Senin entity'de uploadDate vardı)
         List<BloodTest> history = bloodTestRepository.findByUserOrderByUploadDateDesc(user);
         return ResponseEntity.ok(history);
     }
 
-    // EN SON SONUÇ
     @GetMapping("/latest")
     public ResponseEntity<?> getLatestTest() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -59,20 +55,17 @@ public class BloodTestController {
         return tests.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(tests.get(0));
     }
 
-    // GÜNCELLEME (İsim Düzeltildi) ---
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBloodTest(@PathVariable Long id, @RequestBody BloodTest updatedTest) {
         BloodTest existingTest = bloodTestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tahlil bulunamadı"));
 
-        // KRİTİK DÜZELTME: Senin entity'deki isim 'analysisResult'
         existingTest.setAnalysisResult(updatedTest.getAnalysisResult());
 
         bloodTestRepository.save(existingTest);
         return ResponseEntity.ok("Güncellendi.");
     }
 
-    // SİLME ---
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteBloodTest(@PathVariable Long id) {
         bloodTestRepository.deleteById(id);

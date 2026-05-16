@@ -30,12 +30,12 @@ public class Measurement {
     @Column(name = "yas")
     private int yas;
 
-    @Enumerated(EnumType.STRING) // Enum'ı veritabanında 'MALE', 'FEMALE' olarak saklar
+    @Enumerated(EnumType.STRING)
     @Column(name = "cinsiyet")
     private Gender cinsiyet;
 
     @Column(name = "resim")
-    private String resim; // resmin sunucuda ki URL'sini tutacağız
+    private String resim; // resmin sunucuda ki URL'si
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

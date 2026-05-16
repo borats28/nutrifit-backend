@@ -33,11 +33,9 @@ public class Goal {
     @JsonIgnore
     private User user;
 
-    // constructorlar
     public Goal() {
     }
 
-    // getter ve setter
 
     public Long getGoalId() {
         return goalId;

@@ -71,20 +71,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-    //CORS KURALLARINI BELİRTEN BEAN
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Hangi adreslere izin verilecek? (Frontend adresi)
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
 
-        // Hangi metodlara izin verilecek?
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         configuration.setAllowedHeaders(List.of("*"));
 
-        // Token (Cookie/Auth Header) gönderimine izin ver
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

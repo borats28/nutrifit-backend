@@ -31,14 +31,12 @@ public class PlanController {
     @Autowired
     private MeasurementRepository measurementRepository;
 
-    // --- DİYET PLANLARI ---
 
     @PostMapping("/diet")
     public ResponseEntity<?> createDietPlan(@RequestHeader("Authorization") String token) {
         try {
             User user = getUserFromToken(token);
 
-            // Kullanıcının en son hedefini bul
             Optional<Goal> goal = goalRepository.findTopByUserOrderByGoalIdDesc(user);
 
             Optional<Measurement> measure = measurementRepository.findTopByUserOrderByMeasurementDateDesc(user);
@@ -48,12 +46,11 @@ public class PlanController {
             }
 
 
-            // AiService üzerinden plan oluştur
             DiyetPlan plan = aiService.diyetPlaniOlustur(user);
             return ResponseEntity.ok(plan);
 
         } catch (Exception e) {
-            e.printStackTrace(); // Hatayı konsola basar
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("Hata oluştu: " + e.getMessage());
         }
     }
@@ -68,8 +65,6 @@ public class PlanController {
         }
         return ResponseEntity.ok(plans.get(0));
     }
-
-    // --- SPOR PLANLARI ---
 
     @PostMapping("/workout")
     public ResponseEntity<?> createWorkoutPlan(@RequestHeader("Authorization") String token) {
@@ -103,7 +98,6 @@ public class PlanController {
         return ResponseEntity.ok(plans.get(0));
     }
 
-    // YARDIMCI METOD
     private User getUserFromToken(String token) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);

@@ -49,5 +49,5 @@ public class SportPlan {
 
     // 1:N İlişki (SportPlan -> Exercise)
     @OneToMany(mappedBy = "sportPlan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Exercise> exercise; // Bu plana ait egzersizler
+    private List<Exercise> exercise;
 }

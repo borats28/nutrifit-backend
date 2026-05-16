@@ -17,7 +17,6 @@ public class BloodTest {
     @Column(name = "upload_date")
     private LocalDate uploadDate;
 
-    // AI'nın tahlili okuyup çıkardığı özet (Örn: "Demir eksikliği var...")
     @Column(name = "analysis_result", columnDefinition = "LONGTEXT")
     private String analysisResult;
 

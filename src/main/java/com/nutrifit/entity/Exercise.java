@@ -31,7 +31,7 @@ public class Exercise {
     private String numberRepetitions;
 
     @Column(name = "note", columnDefinition = "TEXT")
-    private String note; // egzersiz notları
+    private String note;
 
     // N:1 İlişki (Exercise -> SportPlan)
     @ManyToOne(fetch = FetchType.LAZY)

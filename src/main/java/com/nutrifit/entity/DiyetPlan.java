@@ -31,7 +31,7 @@ public class DiyetPlan {
 
     // N:1 İlişki (DiyetPlan -> User)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // hedefe bağlı plan
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 

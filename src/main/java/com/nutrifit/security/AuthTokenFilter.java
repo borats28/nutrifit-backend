@@ -33,7 +33,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            //Token'ı header'dan ayıkla
             String jwt = parseJwt(request);
 
             //Token var mı ve geçerli mi kontrol et

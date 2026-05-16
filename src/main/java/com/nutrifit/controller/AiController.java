@@ -28,13 +28,8 @@ public class AiController {
                                         @RequestHeader("Authorization") String token) {
         try {
 
-            //"user" değişkenini tanımlıyoruz (Token'dan buluyoruz)
             User user = getUserFromToken(token);
-
-            //Mesajı alıyoruz
             String userMessage = payload.get("message");
-
-            //Artık "user" tanımlı
             String aiResponse = aiService.kocIleSohbetEt(user, userMessage);
 
             return ResponseEntity.ok(Map.of("response", aiResponse));
@@ -43,7 +38,6 @@ public class AiController {
         }
     }
 
-    // Token'dan User nesnesini bul
     private User getUserFromToken(String token) {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
