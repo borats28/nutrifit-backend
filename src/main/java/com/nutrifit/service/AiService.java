@@ -45,8 +45,16 @@ public class AiService {
     @Value("${nutrifit.app.geminiApiKey}")
     private String geminiApiKey;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate;
     private static final Logger logger = LoggerFactory.getLogger(AiService.class);
+
+    public AiService() {
+        this.restTemplate = new RestTemplate();
+    }
+
+    public AiService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
