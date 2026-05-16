@@ -1,6 +1,7 @@
 package com.nutrifit.controller;
 
 import com.nutrifit.entity.User;
+import com.nutrifit.exception.AuthException;
 import com.nutrifit.payload.request.LoginRequest;
 import com.nutrifit.payload.request.SignupRequest;
 import com.nutrifit.payload.response.JwtResponse;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -63,10 +65,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
+        } catch (AuthenticationException e) {
+            throw new AuthException("Hata: Kullanıcı adı veya şifre yanlış!");
+        }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtUtils.generateJwtToken(authentication);
