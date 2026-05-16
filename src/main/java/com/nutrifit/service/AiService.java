@@ -149,11 +149,11 @@ public class AiService {
             String base64Image = Base64.getEncoder().encodeToString(imageFile.getBytes());
 
             String hedefBilgisi = goalRepository.findTopByUserOrderByGoalIdDesc(user)
-                    .map(g -> g.getHedefKilo() + "kg")
+                    .map(g -> getDefaultYazi(g.getHedefKilo()) + "kg")
                     .orElse("belirtilmemiş");
 
             String olcumBilgisi = measurementRepository.findTopByUserOrderByMeasurementDateDesc(user)
-                    .map(m -> m.getKilo() + "kg, " + m.getFitnessLevel() + " seviye")
+                    .map(m -> getDefaultYazi(m.getKilo()) + "kg, " + getDefaultYazi(m.getFitnessLevel()) + " seviye")
                     .orElse("belirtilmemiş");
 
             String prompt = "Bu vücut fotoğrafını analiz et.\n" +
@@ -277,6 +277,12 @@ public class AiService {
             e.printStackTrace();
             return "Üzgünüm, şu an plan oluşturulamıyor. Lütfen daha sonra tekrar deneyin.";
         }
+    }
+
+    private String getDefaultYazi(Object yazi) {
+        if (yazi == null) return "Belirtilmemiş";
+
+        return yazi.toString();
     }
 
 
